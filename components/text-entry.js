@@ -9,6 +9,12 @@ function TextEntry() {
   return function(bot) {
 
     bot.on('message_received', function(message, session, next) {
+
+      // don't handle this if it isn't an attachment
+      if (message.hasOwnProperty("attachments")) {
+        next()
+      }
+
       var request = app.textRequest(message.text);
 
       request.on('response', function(response) {
@@ -22,7 +28,7 @@ function TextEntry() {
 
       request.on('error', function(error) {
         console.log(error);
-        bot.send('I seem to be having a few problems at the moment, sorry :(')
+        session.send('I seem to be having a few problems at the moment, sorry :(')
       });
 
       request.end()

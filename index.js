@@ -7,7 +7,7 @@ var bot = new Pozi.Bot();
 
 bot.use(new Pozi.FacebookMessengerClient())
 bot.use(new FoodNutrition())
-bot.use(new TextEntry())
 bot.use(new ImageEntry())
+bot.use(new TextEntry())
 
 bot.listen();
