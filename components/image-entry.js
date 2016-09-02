@@ -39,7 +39,7 @@ function ImageEntry() {
           var json = JSON.parse(body)
 
           if (json.status === "completed") {
-            session.send(json.name)
+            bot.trigger('fetch_nutrition_for_food', json.name)
           } else {
             session.send("It seems I'm having a bit of trouble figuring out what that is. Maybe you could enter it in manually?")
             console.error(JSON.stringify(json))
