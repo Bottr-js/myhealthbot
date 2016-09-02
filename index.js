@@ -1,8 +1,30 @@
 var Pozi = require('pozi')
 var bot = new Pozi.Bot();
 var apiai = require('apiai');
+var fs = require('fs');
+var request = require('request');
+
+var cloudsight = require ('cloudsight') ({
+  apikey: '0mzlcyDv7sq5o__0IjCk3A'
+});
+
+function Attachment(message) {
+  return message.hasOwnProperty("attachments")
+}
+
+var download = function(uri, filename, callback){
+  request.head(uri, function(err, res, body){
+    console.log('content-type:', res.headers['content-type']);
+    console.log('content-length:', res.headers['content-length']);
+
+    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+  });
+};
+
 const util = require('util')
+
 bot.use(new Pozi.FacebookMessengerClient())
+
 var app = apiai("6071df18bda34abc99a4664ceeadf889");
 
 bot.on('message_received', function(message, session, next) {
@@ -120,5 +142,32 @@ function getFoodFromId(foodId, next) {
     }
   });
 }
+
+bot.hears(Attachment, function(message, session){
+
+  var attachment = message.attachments[0]
+  var url = attachment.payload.url
+
+  var dir = 'public'
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+  }
+
+  // Randomize image name
+  download(url, 'public/google.png', function(){
+
+    request.post('http://usekenko.co:3005/remote-identify',{form: {'image_url': 'https://75b2db1e.ngrok.io/google.png'}}, function (error, response, body) {
+
+      var json = JSON.parse(body)
+
+      if (json.status === "completed") {
+        session.send(json.name)
+      } else {
+        session.send("It seems I'm having a bit of trouble figuring out what that is. Maybe you could enter it in manually?")
+        console.error(JSON.stringify(json))
+      }
+    });
+  });
+})
 
 bot.listen();
