@@ -1,6 +1,6 @@
 function FoodNutrition() {
   return function(bot) {
-    bot.on('fetch_nutrition_for_food', function(product) {
+    bot.on('fetch_nutrition_for_food', function(product, session) {
       var request = require('request');
       var OAuth   = require('oauth-1.0a');
 
@@ -34,7 +34,7 @@ function FoodNutrition() {
           }
           console.log(data.foods.food[0])
           getFoodFromId(data.foods.food[0].food_id, function (food) {
-            var weight = anyQuantityToGram(message.data.parameters['unit-weight'])
+            var weight = anyQuantityToGram(product)
             console.log(food)
             session.send("it contains: " + food.calories * weight / 100 + "kcal, "
                         + food.carbohydrate * weight / 100 + "g of carbohydrate, "
