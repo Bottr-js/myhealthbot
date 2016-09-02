@@ -10,10 +10,6 @@ var download = function(uri, filename, callback){
   });
 };
 
-function Attachment(message) {
-  return message.hasOwnProperty("attachments")
-}
-
 /*
 This component allows the user to create a new food entry
 by sending the bot an image.
@@ -21,7 +17,13 @@ by sending the bot an image.
 function ImageEntry() {
   return function(bot) {
 
-    bot.hears(Attachment, function(message, session){
+    bot.on('message_received', function(message, session, next) {
+
+      // don't handle this if it isn't an attachment
+      if (!message.hasOwnProperty("attachments")) {
+        next()
+        return
+      }
 
       var attachment = message.attachments[0]
       var url = attachment.payload.url
@@ -34,12 +36,16 @@ function ImageEntry() {
       // Randomize image name
       download(url, 'public/google.png', function(){
 
-        request.post('http://usekenko.co:3005/remote-identify',{form: {'image_url': 'https://75b2db1e.ngrok.io/google.png'}}, function (error, response, body) {
+        request.post('http://usekenko.co:3005/remote-identify',{form: {'image_url': 'http://8444fe1b.ngrok.io/google.png'}}, function (error, response, body) {
 
           var json = JSON.parse(body)
 
           if (json.status === "completed") {
+
+            // Get bot to handle the name of the product
             session.send(json.name)
+            bot.trigger('fetch_nutrition_for_food', json.name, session)
+
           } else {
             session.send("It seems I'm having a bit of trouble figuring out what that is. Maybe you could enter it in manually?")
             console.error(JSON.stringify(json))
