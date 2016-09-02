@@ -9,7 +9,10 @@
   "author": "julien",
   "license": "ISC",
   "dependencies": {
+    "apiai": "2.0.7",
+    "fs": "0.0.1-security",
+    "oauth-1.0a": "^1.0.1",
     "pozi": "^0.2.6",
-    "apiai": "2.0.7"
+    "request": "^2.74.0"
   }
 }
