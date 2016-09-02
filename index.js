@@ -1,5 +1,5 @@
 var Pozi = require('pozi')
-var ImageEntry = require('./components/text-entry')
+var TextEntry = require('./components/text-entry')
 var ImageEntry = require('./components/image-entry')
 
 var bot = new Pozi.Bot();

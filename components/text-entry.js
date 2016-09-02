@@ -1,5 +1,5 @@
-var app = apiai("6071df18bda34abc99a4664ceeadf889");
 var apiai = require('apiai');
+var app = apiai("6071df18bda34abc99a4664ceeadf889");
 const util = require('util')
 
 /*
@@ -127,4 +127,4 @@ function getFoodFromId(foodId, next) {
   });
 }
 
-module.exports = ImageEntry
+module.exports = TextEntry
