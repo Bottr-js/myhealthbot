@@ -6,9 +6,16 @@ bot.use(new Pozi.FacebookMessengerClient())
 var app = apiai("6071df18bda34abc99a4664ceeadf889");
 
 bot.on('message_received', function(message, session, next) {
-  var request = app.textRequest(message.text);
+
+  console.log(JSON.stringify(session))
+  var options = {
+      sessionId: session.conversation
+  }
+  var request = app.textRequest(message.text, options);
+
 
   request.on('response', function(response) {
+    console.log(response);
     session.send(response.result.fulfillment.speech)
     message.data = response.result
     next()
@@ -60,12 +67,12 @@ bot.hears(function(message){
       getFoodFromId(data.foods.food[0].food_id, function (food) {
         var weight = anyQuantityToGram(message.data.parameters['unit-weight'])
         console.log(food)
-        session.send("it contains: " + food.calories * weight / 100 + "kcal, "
-                    + food.carbohydrate * weight / 100 + "g of carbohydrate, "
-                    + food.sugar * weight / 100 + "g of sugar, "
-                    + food.fat * weight / 100 + "g of fat, "
-                    + food.saturated_fat * weight / 100 + "g of saturated fat, "
-                    + food.protein * weight / 100 + "g of protein.")
+        session.send("it contains: " + Math.round(food.calories * weight / 100 * 100) / 100 + "kcal, "
+                    + Math.round(food.carbohydrate * weight / 100 * 100) / 100 + "g of carbohydrate, "
+                    + Math.round(food.sugar * weight / 100 * 100) / 100 + "g of sugar, "
+                    + Math.round(food.fat * weight / 100 * 100) / 100 + "g of fat, "
+                    + Math.round(food.saturated_fat * weight / 100 * 100) / 100 + "g of saturated fat, "
+                    + Math.round(food.protein * weight / 100 * 100) / 100 + "g of protein.")
       })
     });
 })
@@ -82,6 +89,8 @@ function anyQuantityToGram(product) {
     gramsValue = value;
   } else if (baseUnit == "lb") {
     gramsValue = value * 454
+  } else if (baseUnit == "oz") {
+    gramsValue = value * 28.35
   }
   return gramsValue;
 }
