@@ -17,7 +17,7 @@ function FoodNutrition() {
           method: 'GET',
           data: {
               method: "foods.search",
-              search_expression: product,
+              search_expression: product.product,
               format: "json",
               max_results: 3
           }
@@ -34,8 +34,7 @@ function FoodNutrition() {
           }
           console.log(data.foods.food[0])
           getFoodFromId(data.foods.food[0].food_id, function (food) {
-            var weight = anyQuantityToGram(product)
-            console.log(food)
+            var weight = anyQuantityToGram(product['unit-weight'])
             session.send("it contains: " + food.calories * weight / 100 + "kcal, "
                         + food.carbohydrate * weight / 100 + "g of carbohydrate, "
                         + food.sugar * weight / 100 + "g of sugar, "

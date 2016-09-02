@@ -21,7 +21,7 @@ function TextEntry() {
         message.data = response.result
 
         if (!message.data.actionIncomplete) {
-          bot.trigger('fetch_nutrition_for_food', message.data.parameters.product, session)
+          bot.trigger('fetch_nutrition_for_food', message.data.parameters, session)
         }
       });
 
