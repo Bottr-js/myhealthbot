@@ -17,7 +17,7 @@ function FoodNutrition() {
           method: 'GET',
           data: {
               method: "foods.search",
-              search_expression: message.data.parameters.product,
+              search_expression: product,
               format: "json",
               max_results: 3
           }

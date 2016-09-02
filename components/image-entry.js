@@ -10,10 +10,6 @@ var download = function(uri, filename, callback){
   });
 };
 
-function Attachment(message) {
-  return message.hasOwnProperty("attachments")
-}
-
 /*
 This component allows the user to create a new food entry
 by sending the bot an image.
@@ -21,7 +17,12 @@ by sending the bot an image.
 function ImageEntry() {
   return function(bot) {
 
-    bot.hears(Attachment, function(message, session){
+    bot.on('message_received', function(message, session, next) {
+
+      // don't handle this if it isn't an attachment
+      if (!message.hasOwnProperty("attachments")) {
+        next()
+      }
 
       var attachment = message.attachments[0]
       var url = attachment.payload.url
@@ -39,7 +40,13 @@ function ImageEntry() {
           var json = JSON.parse(body)
 
           if (json.status === "completed") {
-            bot.trigger('fetch_nutrition_for_food', json.name)
+
+            // Get bot to handle the name of the product
+            bot.send(json.name)
+            bot.trigger('message_received', {
+                text: json.name
+            })
+
           } else {
             session.send("It seems I'm having a bit of trouble figuring out what that is. Maybe you could enter it in manually?")
             console.error(JSON.stringify(json))

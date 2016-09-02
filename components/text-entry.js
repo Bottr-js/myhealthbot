@@ -14,21 +14,19 @@ function TextEntry() {
       request.on('response', function(response) {
         session.send(response.result.fulfillment.speech)
         message.data = response.result
-        next()
+
+        if (!message.data.actionIncomplete) {
+          bot.trigger('fetch_nutrition_for_food', message.data.parameters.product)
+        }
       });
 
       request.on('error', function(error) {
-          console.log(error);
+        console.log(error);
+        bot.send('I seem to be having a few problems at the moment, sorry :(')
       });
 
       request.end()
     });
-
-    bot.hears(function(message){
-      return !message.data.actionIncomplete
-    }, function(message, session) {
-      bot.trigger('fetch_nutrition_for_food', message.data.parameters.product)
-    })
   }
 }
 
