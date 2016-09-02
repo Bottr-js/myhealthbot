@@ -10,7 +10,11 @@ function TextEntry() {
   return function(bot) {
 
     bot.on('message_received', function(message, session, next) {
-      var request = app.textRequest(message.text);
+      var options = {
+          sessionId: session.conversation
+      }
+
+      var request = app.textRequest(message.text, options);
 
       request.on('response', function(response) {
         session.send(response.result.fulfillment.speech)
@@ -88,6 +92,8 @@ function anyQuantityToGram(product) {
     gramsValue = value;
   } else if (baseUnit == "lb") {
     gramsValue = value * 454
+  } else {
+    gramsValue = 100
   }
   return gramsValue;
 }
