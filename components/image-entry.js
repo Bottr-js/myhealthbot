@@ -36,17 +36,15 @@ function ImageEntry() {
       // Randomize image name
       download(url, 'public/google.png', function(){
 
-        request.post('http://usekenko.co:3005/remote-identify',{form: {'image_url': 'https://75b2db1e.ngrok.io/google.png'}}, function (error, response, body) {
+        request.post('http://usekenko.co:3005/remote-identify',{form: {'image_url': 'http://8444fe1b.ngrok.io/google.png'}}, function (error, response, body) {
 
           var json = JSON.parse(body)
 
           if (json.status === "completed") {
 
             // Get bot to handle the name of the product
-            bot.send(json.name)
-            bot.trigger('message_received', {
-                text: json.name
-            })
+            session.send(json.name)
+            bot.trigger('fetch_nutrition_for_food', json.name, session)
 
           } else {
             session.send("It seems I'm having a bit of trouble figuring out what that is. Maybe you could enter it in manually?")
