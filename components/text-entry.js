@@ -10,12 +10,11 @@ function TextEntry() {
 
     bot.on('message_received', function(message, session, next) {
 
-      // don't handle this if it isn't an attachment
-      if (message.hasOwnProperty("attachments")) {
-        next()
+      var options = {
+          sessionId: session.conversation
       }
 
-      var request = app.textRequest(message.text);
+      var request = app.textRequest(message.text, options);
 
       request.on('response', function(response) {
         session.send(response.result.fulfillment.speech)

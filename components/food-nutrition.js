@@ -60,7 +60,10 @@ function anyQuantityToGram(product) {
     gramsValue = value;
   } else if (baseUnit == "lb") {
     gramsValue = value * 454
+  } else {
+    gramsValue = 100
   }
+
   return gramsValue;
 }
 
