@@ -1,6 +1,7 @@
 function FoodNutrition() {
   return function(bot) {
     bot.on('fetch_nutrition_for_food', function(product, session) {
+      console.log(product)
       var request = require('request');
       var OAuth   = require('oauth-1.0a');
 
@@ -32,8 +33,15 @@ function FoodNutrition() {
           if (data.error != undefined) {
             return ;
           }
-          console.log(data.foods.food[0])
+          if (data.foods.food == undefined) {
+            session.send("food not found")
+            return;
+          }
           getFoodFromId(data.foods.food[0].food_id, function (food) {
+            if (product['unit-weight'] == undefined) {
+              session.send("weight not found")
+              return ;
+            }
             var weight = anyQuantityToGram(product['unit-weight'])
             session.send("it contains: " + food.calories * weight / 100 + "kcal, "
                         + food.carbohydrate * weight / 100 + "g of carbohydrate, "
@@ -50,17 +58,14 @@ function FoodNutrition() {
 function anyQuantityToGram(product) {
   var value = product.amount
   var baseUnit = product.unit
-  var gramsValue
+  var gramsValue = 100
 
-  console.log(product);
   if (baseUnit == "kg") {
     gramsValue = value * 1000;
   } else if (baseUnit == "g") {
     gramsValue = value;
   } else if (baseUnit == "lb") {
     gramsValue = value * 454
-  } else {
-    gramsValue = 100
   }
 
   return gramsValue;
