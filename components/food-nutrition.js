@@ -34,32 +34,42 @@ function FoodNutrition() {
             return ;
           }
           if (data.foods.food == undefined) {
-            session.send("food not found");
+            session.send("I haven't been able to find this product");
             return ;
           }
           getFoodFromId(data.foods.food[0].food_id, function (food) {
             if (food == null) {
-              session.send("food not found");
+              session.send("I haven't been able to find informations about this product");
               return ;
             }
             console.log(food)
             var weight = anyQuantityToGram(product['unit-weight'])
-            // session.send(weight + "grams of " + data.foods.food[0].food_name + " contains: " + food.calories * weight / 100 + "kcal, "
-            //             + food.carbohydrate * weight / 100 + "g of carbohydrate, "
-            //             + food.sugar * weight / 100 + "g of sugar, "
-            //             + food.fat * weight / 100 + "g of fat, "
-            //             + food.saturated_fat * weight / 100 + "g of saturated fat, "
-            //             + food.protein * weight / 100 + "g of protein.")
 
-            session.send(data.foods.food[0].food_name + "\n"
-                        + "---------------------------\n"
-                        + "Typical values per " + weight + "grams\n\n"
-                        + "Energy, kcal:\t\t" + food.calories * weight / 100 + "\n"
-                        + "Fat, g:\t\t\t" + food.fat * weight / 100 + "\n"
-                        + " saturates, g:\t\t" + food.saturated_fat * weight / 100 + "\n"
-                        + "Carbohydrate, g:\t" + food.carbohydrate * weight / 100 + "\n"
-                        + " sugars, g:\t\t" + food.sugar * weight / 100 + "\n"
-                        + "Protein, g:\t\t" + food.protein * weight / 100 + "\n")
+            if (weight == -1) {
+              weight = food.metric_serving_amount
+            }
+
+            if (food.metric_serving_amount == undefined) {
+              session.send(data.foods.food[0].food_name + "\n"
+                          + "---------------------------\n"
+                          + "Typical values per " + food.serving_description + "\n\n"
+                          + "Energy, kcal:\t\t" + food.calories + "\n"
+                          + "Fat, g:\t\t\t" + food.fat + "\n"
+                          + " saturates, g:\t\t" + food.saturated_fat + "\n"
+                          + "Carbohydrate, g:\t" + food.carbohydrate + "\n"
+                          + " sugars, g:\t\t" + food.sugar + "\n"
+                          + "Protein, g:\t\t" + food.protein + "\n")
+            } else {
+              session.send(data.foods.food[0].food_name + "\n"
+                          + "---------------------------\n"
+                          + "Typical values per " + weight + "grams\n\n"
+                          + "Energy, kcal:\t\t" + (food.calories * weight / food.metric_serving_amount).toFixed(1) + "\n"
+                          + "Fat, g:\t\t\t" + (food.fat * weight / food.metric_serving_amount).toFixed(1) + "\n"
+                          + " saturates, g:\t\t" + (food.saturated_fat * weight / food.metric_serving_amount).toFixed(1) + "\n"
+                          + "Carbohydrate, g:\t" + (food.carbohydrate * weight / food.metric_serving_amount).toFixed(1) + "\n"
+                          + " sugars, g:\t\t" + (food.sugar * weight / food.metric_serving_amount).toFixed(1) + "\n"
+                          + "Protein, g:\t\t" + (food.protein * weight / food.metric_serving_amount).toFixed(1) + "\n")
+            }
           })
         });
     })
@@ -67,6 +77,8 @@ function FoodNutrition() {
 }
 
 function anyQuantityToGram(product) {
+  if (product == undefined)
+    return -1;
   var value = product.amount
   var baseUnit = product.unit
   var gramsValue
@@ -113,6 +125,10 @@ function getFoodFromId(foodId, next) {
   }, function(error, response, body) {
     var data = JSON.parse(body);
     console.log(JSON.stringify(data))
+    if (data.food.servings.serving != undefined && data.food.servings.serving.length == undefined) {
+      next(data.food.servings.serving);
+      return ;
+    }
     for (var i = 0; i < data.food.servings.serving.length; ++i) {
       if (data.food.servings.serving[i].metric_serving_unit == "g" && data.food.servings.serving[i].metric_serving_amount == 100) {
         next(data.food.servings.serving[i]);
