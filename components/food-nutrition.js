@@ -6,8 +6,8 @@ function FoodNutrition() {
 
       var oauth = OAuth({
           consumer: {
-              public: 'df8840ca2de5455997f6cd2a2d2153f9',
-              secret: '7627e9db5f084af993118300901fad5e'
+              public: process.env.FATSECRET_PUBLIC,
+              secret: process.env.FATSECRET_PRIVATE
           },
           signature_method: 'HMAC-SHA1'
       });
@@ -103,8 +103,8 @@ function getFoodFromId(foodId, next) {
 
   var oauth = OAuth({
       consumer: {
-          public: 'df8840ca2de5455997f6cd2a2d2153f9',
-          secret: '7627e9db5f084af993118300901fad5e'
+          public: process.env.FATSECRET_PUBLIC,
+          secret: process.env.FATSECRET_PRIVATE
       },
       signature_method: 'HMAC-SHA1'
   });

@@ -1,5 +1,5 @@
 var apiai = require('apiai');
-var app = apiai("6071df18bda34abc99a4664ceeadf889");
+var app = apiai(process.env.APIAI_KEY);
 
 /*
 This component allows the user to create a new food entry

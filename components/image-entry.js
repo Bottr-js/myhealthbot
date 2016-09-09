@@ -25,7 +25,7 @@ function ImageEntry() {
           form: {
             'url': "http://8444fe1b.ngrok.io/" + url,
             'modelkey': 'concept',
-            'apikey': '2bccc317-7816-4413-be86-7f450020fc78'
+            'apikey': process.env.EIGHTBIT_AI_KEY
           }
         }, function (error, response, body) {
 
